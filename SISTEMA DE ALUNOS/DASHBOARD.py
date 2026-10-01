@@ -1,7 +1,9 @@
 import tkinter as tk
 from tkinter import messagebox
+import banco
 logado=False
-
+azul="#014683"  
+ 
 def janela_login():
     if logado==True:
         return
@@ -94,20 +96,43 @@ def janela_login():
         column=1,
         pady=(3,0)
     )
-    def fazer_login():
-        global logado
+
+    def verificador_login():
+        erros=0
+        caracteres_usuario=len(usuario.get())
+        caracteres_senha=len(senha.get())
+        if caracteres_usuario==0 and caracteres_senha==0:
+            messagebox.showerror(" ","Insira suas informações de login")
+            return
+        if caracteres_usuario<3:
+            messagebox.showwarning("Usuário","Mínimo de 3 caracteres")
+            erros+=1
+        if caracteres_senha<8:
+            messagebox.showwarning("Senha inválida","*Insira uma senha de no mínimo 8 Caracteres*")
+            erros+=1
+        if erros==0:
+            global logado
+            banco.cadastrar_usuario(
+                usuario.get(),
+                senha.get()
+            )
+            logado=True
+            login.destroy
+            janela_login_bem_sucedido()
+        
+    def janela_login_bem_sucedido():
         messagebox.showinfo("Login","Login realizado com sucesso") 
         login_botao.configure(
             text=usuario.get()
         )
-        login.destroy
+        
     enviar=tk.Button(
         login,
         text="Login",
         bg="#0E5EA4",
         fg="white",
         width=15,
-        command=fazer_login
+        command=lambda:verificador_login()
     )
     enviar.grid(
         row=6,
@@ -125,7 +150,7 @@ def cadastrar_alunos():
     elif logado==True:
         cadastro = tk.Toplevel()
         cadastro.title("Cadastro")
-        cadastro.geometry("500x300")
+        cadastro.geometry("700x500")
         cadastro.resizable(False, False)
         cadastro.configure(bg="#014683")
 
@@ -133,9 +158,113 @@ def cadastrar_alunos():
         cadastro.grid_columnconfigure(1, weight=1)
         cadastro.transient()
         cadastro.focus_set()
-        nome=tk.Entry
-        pass
-
+        header_cadastro=tk.Frame(
+            cadastro,
+            height=100,
+            bg="#066FCA"
+            )
+        header_cadastro.grid_propagate
+        header_cadastro.grid(
+            row=0,
+            column=0,
+            columnspan=2,
+            sticky="ew"
+        )
+        text_cadastro=tk.Label(
+            header_cadastro,
+            text="Cadastro de alunos",
+            font=("Arial",20,"bold"),
+            bg="#066FCA",
+            fg="#FFFFFF")
+        text_cadastro.grid(
+            row=0,
+            column=1,
+            columnspan=2,
+            padx=(15,15),
+            pady=(5,5)
+        )
+        tk.Label(
+            cadastro,
+            text="Nome do aluno",
+            font=("Arial",15,"bold"),
+            fg="#FFFFFF",
+            bg=azul
+        ).grid(
+            row=1,
+            column=0,
+            columnspan=2
+        )
+        nome=tk.Entry(
+            cadastro,
+            width=25,
+        )
+        nome.grid(
+            row=2,
+            column=0,
+            columnspan=2
+        )
+        tk.Label(
+            cadastro,
+            text="RM",
+            font=("Arial",15,"bold"),
+            fg="#FFFFFF",
+            bg=azul
+        ).grid(
+            row=3,
+            column=0,
+            columnspan=2)
+        rm=tk.Entry(
+            cadastro,
+            width=25,
+        )
+        rm.grid(
+            row=4,
+            column=0,
+            columnspan=2
+        )
+        tk.Label(
+            cadastro,
+            text="Turma(DS/ADM)",
+            font=("Arial",15,"bold"),
+            fg="#FFFFFF",
+            bg=azul
+        ).grid(
+            row=5,
+            column=0,
+            columnspan=2)
+        turma=tk.Entry(
+            cadastro,
+            width=25,
+        )
+        turma.grid(
+            row=6,
+            column=0,
+            columnspan=2
+        )
+        nome_digitado=nome.get()
+        rm_digitado=rm.get()
+        turma_digitado=turma.get()
+        turma_digitado.upper
+        def verificador_cadastro():
+            erros=0
+            if nome_digitado=="" or rm_digitado=="" or turma_digitado=="":
+                messagebox.showwarning("Cadastro Inválido","Preencha todos os campos corretamente")
+                erros+=1
+            try:
+                rm_digitado=int(input(rm))
+            except:
+                messagebox.showwarning("RM Inválido","Insira apenas valores numéricos")
+                erros+=1
+            if turma_digitado!="DS" or turma_digitado!="ADM":
+                messagebox.showwarning("Turma inválida","Insira apenas [ds] ou [adm]") 
+                erros+=1
+            if erros==0:
+                banco.cadastrar_aluno(
+                    nome_digitado,
+                    rm_digitado,
+                    turma_digitado
+                )
+#salve arnaldo
 def listar_alunos():
     if logado==False:
         faca_login()
