@@ -15,7 +15,7 @@ def janela_login():
 
     login.grid_columnconfigure(0, weight=1)
     login.grid_columnconfigure(1, weight=1)
-    login.transient(dashboard)
+    login.transient()
     login.focus_set()
     titulo=tk.Label(
         login,
@@ -96,6 +96,7 @@ def janela_login():
         column=1,
         pady=(3,0)
     )
+
     def verificador_login():
         erros=0
         caracteres_usuario=len(usuario.get())
@@ -116,12 +117,15 @@ def janela_login():
                 senha.get()
             )
             logado=True
-            nome=usuario.get()
-            login_botao.configure(
-                text=nome
-              )
-            login.destroy()
-            messagebox.showinfo("","Login bem sucedido")
+            login.destroy
+            janela_login_bem_sucedido()
+        
+    def janela_login_bem_sucedido():
+        messagebox.showinfo("Login","Login realizado com sucesso") 
+        login_botao.configure(
+            text=usuario.get()
+        )
+        
     enviar=tk.Button(
         login,
         text="Login",
@@ -152,14 +156,14 @@ def cadastrar_alunos():
 
         cadastro.grid_columnconfigure(0, weight=1)
         cadastro.grid_columnconfigure(1, weight=1)
-        cadastro.transient(dashboard)
+        cadastro.transient()
         cadastro.focus_set()
         header_cadastro=tk.Frame(
             cadastro,
             height=100,
             bg="#066FCA"
             )
-        header_cadastro.grid_propagate(False)
+        header_cadastro.grid_propagate
         header_cadastro.grid(
             row=0,
             column=0,
@@ -188,8 +192,7 @@ def cadastrar_alunos():
         ).grid(
             row=1,
             column=0,
-            columnspan=2,
-            pady=(5,5)
+            columnspan=2
         )
         nome=tk.Entry(
             cadastro,
@@ -198,8 +201,7 @@ def cadastrar_alunos():
         nome.grid(
             row=2,
             column=0,
-            columnspan=2,
-            pady=(5,5)
+            columnspan=2
         )
         tk.Label(
             cadastro,
@@ -210,8 +212,7 @@ def cadastrar_alunos():
         ).grid(
             row=3,
             column=0,
-            columnspan=2,
-            pady=(5,5))
+            columnspan=2)
         rm=tk.Entry(
             cadastro,
             width=25,
@@ -219,8 +220,7 @@ def cadastrar_alunos():
         rm.grid(
             row=4,
             column=0,
-            columnspan=2,
-            pady=(5,5)
+            columnspan=2
         )
         tk.Label(
             cadastro,
@@ -231,8 +231,7 @@ def cadastrar_alunos():
         ).grid(
             row=5,
             column=0,
-            columnspan=2,
-            pady=(5,5))
+            columnspan=2)
         turma=tk.Entry(
             cadastro,
             width=25,
@@ -240,535 +239,49 @@ def cadastrar_alunos():
         turma.grid(
             row=6,
             column=0,
-            columnspan=2,
-            pady=(5,5)
+            columnspan=2
         )
-        tk.Button(
-            cadastro,
-            text="Cadastrar",
-            font=("Arial",10,"bold"),
-            fg="#FFFFFF",
-            bg=azul,
-            width=20,
-            command=lambda:verificador_cadastro()
-        ).grid(
-            row=7,
-            column=0,
-            columnspan=2,
-            pady=(15,5)
-        )
-        
+        nome_digitado=nome.get()
+        rm_digitado=rm.get()
+        turma_digitado=turma.get()
+        turma_digitado.upper
         def verificador_cadastro():
-            nome_digitado=nome.get().strip().upper()
-            rm_digitado=rm.get().strip()
-            turma_digitado=turma.get().strip().upper()
+            erros=0
             if nome_digitado=="" or rm_digitado=="" or turma_digitado=="":
-                messagebox.showwarning(
-                    "Cadastro Inválido",
-                    "Preencha todos os campos corretamente",
-                    parent=cadastro
+                messagebox.showwarning("Cadastro Inválido","Preencha todos os campos corretamente")
+                erros+=1
+            try:
+                rm_digitado=int(input(rm))
+            except:
+                messagebox.showwarning("RM Inválido","Insira apenas valores numéricos")
+                erros+=1
+            if turma_digitado!="DS" or turma_digitado!="ADM":
+                messagebox.showwarning("Turma inválida","Insira apenas [ds] ou [adm]") 
+                erros+=1
+            if erros==0:
+                banco.cadastrar_aluno(
+                    nome_digitado,
+                    rm_digitado,
+                    turma_digitado
                 )
-                return
-            if not rm_digitado.isdigit():
-                messagebox.showwarning(
-                    "RM inválido",
-                    "O RM deve conter apenas números",
-                    parent=cadastro
-                )
-                return
-            if turma_digitado not in ("DS","ADM"):
-                messagebox.showwarning(
-                    "Turma inválida",
-                    "Insira apenas [DS] ou [ADM]",
-                    parent=cadastro
-                )
-                return
-            cadastrou=banco.cadastrar_aluno(
-                nome_digitado,
-                int(rm_digitado),
-                turma_digitado
-            )
-            if cadastrou:
-                cadastro.destroy()
-                messagebox.showinfo("Sucesso","Aluno cadastrado com sucesso")
-            else:
-                messagebox.showwarning(
-                    "RM já cadastrado",
-                    "Esse RM já está cadastrado.",
-                    parent=cadastro
-                )
-
-
+#salve arnaldo
 def listar_alunos():
-    if logado == False:
+    if logado==False:
         faca_login()
-        return
-    else:
-        alunos = banco.listar_alunos()
+    pass
 
-        janela = tk.Toplevel()
-        janela.title("Alunos cadastrados")
-        janela.geometry("700x500")
-        janela.resizable(False, False)
-        janela.configure(bg=azul)
-        janela.transient(dashboard)
-        janela.focus_set()
-
-        header_listar = tk.Frame(
-            janela,
-            height=100,
-            bg="#066FCA"
-        )
-        header_listar.pack(
-            fill="x"
-        )
-        tk.Label(
-            header_listar,
-            text="Lista de alunos",
-            font=("Arial", 20, "bold"),
-            bg="#066FCA",
-            fg="#FFFFFF"
-        ).pack(
-            pady=25
-        )
-        area = tk.Frame(
-            janela,
-            bg=azul
-        )
-        area.pack(
-            fill="both",
-            expand=True
-        )
-        canvas = tk.Canvas(
-            area,
-            bg=azul,
-            highlightthickness=0
-        )
-        barra = tk.Scrollbar(
-            area,
-            orient="vertical",
-            command=canvas.yview
-        )
-        frame_alunos = tk.Frame(
-            canvas,
-            bg=azul
-        )
-        frame_alunos.bind(
-            "<Configure>",
-            lambda evento: canvas.configure(
-                scrollregion=canvas.bbox("all")
-            )
-        )
-        canvas.create_window(
-            (0,0),
-            window=frame_alunos,
-            anchor="nw",
-            width=680
-        )
-        canvas.configure(
-            yscrollcommand=barra.set
-        )
-        canvas.pack(
-            side="left",
-            fill="both",
-            expand=True
-        )
-        barra.pack(
-            side="right",
-            fill="y"
-        )
-
-        if len(alunos) == 0:
-            messagebox.showwarning("Erro","Nenhum aluno cadastrado")
-            
-
-        for aluno in alunos:
-            nome = aluno[1]
-            rm = aluno[2]
-            turma = aluno[3]
-            
-            frame_aluno = tk.Frame(
-                frame_alunos,
-                bg="#FFFFFF",
-                height=50
-            )
-            frame_aluno.pack(
-                fill="x",
-                padx=10,
-                pady=5
-            )
-            tk.Label(
-                frame_aluno,
-                text=f"{nome} | RM: {rm} | Turma: {turma}",
-                font=("Arial", 12),
-                bg="#FFFFFF",
-                fg="#000000"
-            ).pack(
-                pady=5
-            )
-    
 def pesquisar_aluno():
     if logado==False:
         faca_login()
-        return
-    pesquisa = tk.Toplevel()
-    pesquisa.title("Pesquisa de aluno")
-    pesquisa.geometry("700x500")
-    pesquisa.resizable(False, False)
-    pesquisa.configure(bg="#014683")
-
-    pesquisa.grid_columnconfigure(0, weight=1)
-    pesquisa.grid_columnconfigure(1, weight=1)
-    pesquisa.transient(dashboard)
-    pesquisa.focus_set()
-    header_pesquisa = tk.Frame(
-        pesquisa,
-        height=100,
-        bg="#066FCA"
-    )
-    header_pesquisa.grid_propagate(False)
-    header_pesquisa.grid(
-        row=0,
-        column=0,
-        columnspan=2,
-        sticky="ew"
-    )
-    titulo_frame_pesquisa = tk.Label(
-        header_pesquisa,
-        text="Pesquisa de aluno",
-        font=("Arial",20,"bold"),
-        bg="#066FCA",
-        fg="#FFFFFF"
-    )
-    titulo_frame_pesquisa.grid(
-        row=0,
-        column=1,
-        columnspan=2,
-        padx=(15,15)
-    )
-    tk.Label(
-        pesquisa,
-        text="Aluno",
-        font=("Arial",15,"bold"),
-        width=20,
-        bg="#066FCA",
-        fg="#FFFFFF"
-    ).grid(
-        row=2,
-        column=0,
-        columnspan=2     
-    )
-    nome=tk.Entry(
-        pesquisa,
-        width=20
-    )
-    nome.grid(
-        row=3,
-        column=0,
-        columnspan=2,
-        pady=(5,5)
-    )
-    tk.Label(
-        pesquisa,
-        text="Rm",
-        font=("Arial",15,"bold"),
-        width=20,
-        bg="#066FCA",
-        fg="#FFFFFF").grid(
-            row=4,
-            column=0,
-            columnspan=2,
-            pady=(5,5)
-        )
-    rm=tk.Entry(
-        pesquisa,
-        width=20
-    )
-    rm.grid(
-        row=5,
-        column=0,
-        columnspan=2,
-        pady=(5,5)
-    )
-    tk.Button(
-        pesquisa,
-        text="Pesquisar",
-        font=("Arial",15,"bold"),
-        command=lambda:pesquisa_aluno(),
-        width=15,
-        bg="#066FCA",
-        fg="#FFFFFF"
-    ).grid(
-        row=6,
-        column=0,
-        columnspan=2,
-        pady=(15,5)
-        )
-    def pesquisa_aluno():
-        nome_pesquisado=nome.get()
-        rm_pesquisado=rm.get()
-        resultado=banco.pesquisar_alunos(nome_pesquisado,rm_pesquisado)
-        if resultado=="Aluno não encontrado":
-            messagebox.showerror("Erro","Aluno não encontrado",parent=pesquisa)
-        else:
-            messagebox.showinfo(
-                "Aluno encontrado",
-                f"Nome:{resultado[1]}\nRm:{resultado[2]}",
-                parent=pesquisa
-            )
-
-def ler_notas(entradas):
-    valores=[]
-    for entrada in entradas:
-        texto=entrada.get().strip().replace(",",".")
-        if texto=="":
-            raise ValueError("Preencha as 4 notas")
-        try:
-            valor=float(texto)
-        except ValueError:
-            raise ValueError("Digite apenas números nas notas")
-        if not (0<=valor<=10):
-            raise ValueError("As notas devem estar entre 0 e 10")
-        valores.append(valor)
-    return valores
+    pass
 
 def calcular_media():
     if logado==False:
         faca_login()
-    else:
-        alunos=banco.listar_alunos()
-        notas_salvas=banco.listar_notas()
-        calculo_media = tk.Toplevel()
-        calculo_media.title("Alunos cadastrados")
-        calculo_media.geometry("700x500")
-        calculo_media.resizable(False, False)
-        calculo_media.configure(bg=azul)
-        calculo_media.transient(dashboard)
-        calculo_media.focus_set()
-
-        pendentes={}
-
-        def salvar_tudo():
-            if not pendentes:
-                messagebox.showwarning(
-                    "Nada a salvar",
-                    "Confirme as notas de pelo menos um aluno.",
-                    parent=calculo_media
-                )
-                return
-            try:
-                banco.guardar_notas_lote(pendentes)
-            except Exception as erro:
-                messagebox.showerror(
-                    "Erro",
-                    f"Não foi possível salvar: {erro}",
-                    parent=calculo_media
-                )
-                return
-            messagebox.showinfo(
-                "Sucesso",
-                f"Notas de {len(pendentes)} aluno(s) salvas com sucesso",
-                parent=calculo_media
-            )
-            calculo_media.destroy()
-
-        tk.Button(
-            calculo_media,
-            text="Salvar tudo",
-            font=("Arial",12,"bold"),
-            fg="#FFFFFF",
-            bg="#066FCA",
-            width=20,
-            command=lambda:salvar_tudo()
-        ).pack(
-            side="bottom",
-            pady=10
-        )
-
-        area_canva = tk.Frame(
-            calculo_media,
-            bg=azul
-        )
-        area_canva.pack(
-            fill="both",
-            expand=True
-        )
-        canvas = tk.Canvas(
-            area_canva,
-            bg=azul
-        )
-        barra = tk.Scrollbar(
-            area_canva,
-            orient="vertical",
-            command=canvas.yview
-        )
-        frame_alunos = tk.Frame(
-            canvas,
-            bg=azul
-        )
-        frame_alunos.bind(
-            "<Configure>",
-            lambda evento: canvas.configure(
-                scrollregion=canvas.bbox("all")
-            )
-        )
-        
-        canvas.create_window(
-            (0,0),
-            window=frame_alunos,
-            anchor="nw",
-            width=680
-        )
-        canvas.configure(
-            yscrollcommand=barra.set
-        )
-        canvas.pack(
-            side="left",
-            fill="both",
-            expand=True
-        )
-        barra.pack(
-            side="right",
-            fill="y"
-        )
-        for aluno in alunos:
-            aluno_id = aluno[0]
-            nome = aluno[1]
-            rm = aluno[2]
-
-            frame_media = tk.Frame(
-                frame_alunos,
-                bg="#066FCA",
-                height=70
-            )
-            frame_media.pack(
-                fill="x",
-                padx=15,
-                pady=5
-            )
-
-            frame_media.grid_columnconfigure(0, weight=3)
-            frame_media.grid_columnconfigure(1, weight=1)
-            frame_media.grid_columnconfigure(2, weight=1)
-            frame_media.grid_columnconfigure(3, weight=1)
-            frame_media.grid_columnconfigure(4, weight=1)
-            frame_media.grid_columnconfigure(5, weight=1)
-            frame_media.grid_columnconfigure(6, weight=1)
-
-            tk.Label(
-                frame_media,
-                text=f"{nome} | RM: {rm}",
-                font=("Arial", 12, "bold"),
-                bg="#066FCA",
-                fg="white",
-                anchor="w"
-            ).grid(
-                row=0,
-                column=0,
-                padx=10,
-                pady=10,
-                sticky="ew"
-            )
-
-            nota1 = tk.Entry(frame_media, width=8)
-            nota1.grid(row=0, column=1, padx=5)
-            nota2 = tk.Entry(frame_media, width=8)
-            nota2.grid(row=0, column=2, padx=5)
-            nota3 = tk.Entry(frame_media, width=8)
-            nota3.grid(row=0, column=3, padx=5)
-            nota4 = tk.Entry(frame_media, width=8)
-            nota4.grid(row=0, column=4, padx=5)
-            label_media = tk.Label(
-                frame_media,
-                width=8,
-                text="-",
-                bg="#FFFFFF",
-                fg="#000000",
-                relief="solid",
-                bd=1
-            )
-            label_media.grid(
-                row=0,
-                column=5,
-                padx=5
-            )
-
-            entradas=[nota1,nota2,nota3,nota4]
-
-            if aluno_id in notas_salvas:
-                salvas=notas_salvas[aluno_id]
-                for entrada,valor in zip(entradas,salvas[:4]):
-                    entrada.insert(0,f"{valor:g}")
-                label_media.configure(
-                    text=f"{salvas[4]:.2f}"
-                )
-
-            botao_confirmar = tk.Button(
-                frame_media,
-                width=10,
-                text="Confirmar"
-            )
-            botao_confirmar.grid(
-                row=0,
-                column=6,
-                padx=5
-            )
-
-            def atualizar_media(
-                evento=None,
-                aluno_id=aluno_id,
-                entradas=entradas,
-                label_media=label_media,
-                botao_confirmar=botao_confirmar
-            ):
-                try:
-                    notas=ler_notas(entradas)
-                    media=sum(notas)/4
-                    label_media.configure(
-                        text=f"{media:.2f}"
-                    )
-                except ValueError:
-                    notas=None
-                    label_media.configure(
-                        text="-"
-                    )
-                if pendentes.get(aluno_id)!=notas:
-                    pendentes.pop(aluno_id,None)
-                    botao_confirmar.configure(
-                        text="Confirmar"
-                    )
-
-            def confirmar(
-                aluno_id=aluno_id,
-                entradas=entradas,
-                botao_confirmar=botao_confirmar
-            ):
-                try:
-                    notas=ler_notas(entradas)
-                except ValueError as erro:
-                    messagebox.showerror(
-                        "Erro",
-                        str(erro),
-                        parent=calculo_media
-                    )
-                    return
-                pendentes[aluno_id]=notas
-                botao_confirmar.configure(
-                    text="Confirmado"
-                )
-
-            botao_confirmar.configure(
-                command=confirmar
-            )
-            for entrada in entradas:
-                entrada.bind(
-                    "<KeyRelease>",
-                    atualizar_media
-                )
-         
+    pass
 
 def sair():
-    dashboard.destroy()
+    dashboard.destroy
 
 dashboard=tk.Tk() 
 dashboard.title("Sistema de alunos")
@@ -897,4 +410,6 @@ tk.Button(
 )
 
 
-dashboard.mainloop()
+dashboard.mainloop()git status
+git ls-files
+git push -u origin main
